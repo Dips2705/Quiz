@@ -11,8 +11,8 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from ..decorators import teacher_required
-from ..forms import BaseAnswerInlineFormSet, QuestionForm, TeacherSignUpForm
-from ..models import Answer, Question, Quiz, User
+from ..forms import *
+from ..models import *
 
 
 class TeacherSignUpView(CreateView):
@@ -39,7 +39,6 @@ class QuizListView(ListView):
 
     def get_queryset(self):
         queryset = self.request.user.quizzes \
-            .select_related('subject') \
             .annotate(questions_count=Count('questions', distinct=True)) \
             .annotate(taken_count=Count('taken_quizzes', distinct=True))
         return queryset
@@ -48,7 +47,7 @@ class QuizListView(ListView):
 @method_decorator([login_required, teacher_required], name='dispatch')
 class QuizCreateView(CreateView):
     model = Quiz
-    fields = ('name', 'subject', )
+    fields = ('name',  )
     template_name = 'classroom/teachers/quiz_add_form.html'
 
     def form_valid(self, form):
@@ -62,7 +61,7 @@ class QuizCreateView(CreateView):
 @method_decorator([login_required, teacher_required], name='dispatch')
 class QuizUpdateView(UpdateView):
     model = Quiz
-    fields = ('name', 'subject', )
+    fields = ('name', )
     context_object_name = 'quiz'
     template_name = 'classroom/teachers/quiz_change_form.html'
 
